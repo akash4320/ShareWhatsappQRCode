@@ -86,12 +86,17 @@ function App() {
   }
 
   const shareMed2 = async() => {
-    const shareDataLoad = {
-			title: 'Whatsapp QR-Code',
-			text: 'Sharing Whatsapp QR-Code',
-			url: `https://api.whatsapp.com/send?phone=917428396005&text=Hi`,
-			files: []
-		};
+    let shareDataLoad = {files: []};
+
+    const md = new MobileDetect(window.navigator.userAgent);
+    if(!md.is('iPhone')) {
+      shareDataLoad = {
+        title: 'Whatsapp QR-Code',
+        text: 'Sharing Whatsapp QR-Code',
+        url: `https://api.whatsapp.com/send?phone=917428396005&text=Hi`,
+        files: []
+      };
+    }
 
 		fetch(logo).then(res => res.blob()).then(async (file) => {
       		const fileName = "logo" + ".jpg";
