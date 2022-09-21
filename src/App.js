@@ -3,10 +3,10 @@ import { saveAs } from 'file-saver';
 import logo from './Whatsapp_QR_Code.jpg';
 import "./styles.css";
 import { RWebShare } from "react-web-share";
+const MobileDetect = require('mobile-detect');
 
 function App() {
   const [shareData, setshareDataLoad] = useState({});
-
   useEffect(() => {
     const shareDataLoad = {
 			title: 'Whatsapp QR-Code',
@@ -85,44 +85,49 @@ function App() {
     }
   }
 
-  const shareMed2 = () => {
+  const shareMed2 = async() => {
     const shareDataLoad = {
 			title: 'Whatsapp QR-Code',
 			text: 'Sharing Whatsapp QR-Code',
 			url: `https://api.whatsapp.com/send?phone=917428396005&text=Hi`,
 			files: []
 		};
-		fetch(logo).then(res => res.blob()).then(file => {
+
+		fetch(logo).then(res => res.blob()).then(async (file) => {
       		const fileName = "logo" + ".jpg";
-      		const options = { type: "image/jpeg" };
+      		const options = { type: file.type }
       		const newFile = new File([file], fileName, options);
       		shareDataLoad.files.push(newFile);
 
-      		if (navigator.canShare(shareDataLoad)) {
-        		navigator.share(shareDataLoad).catch((err) => console.log("Sharing failed",err));
+      		if (navigator.canShare && navigator.canShare(shareDataLoad)) {
+            try {
+              await navigator.share(shareDataLoad)
+            }catch(err) {
+              console.log("Sharing failed",err)
+            }
       		}
    		}).catch((err) => console.log("Unable to fetch Whatsapp QR-code image",err));
   }
 
+  const detectMobile = () => {
+    const md = new MobileDetect(window.navigator.userAgent);
+    console.log(md.os())
+    return md.is('iPhone').toString();
+  }
+
   return (
     <div className="App">
-      {/* <button
+      <button
         onClick={shareMed2}
       >
       Share
       </button>
-      <div>
-        <label for="files">Select images to share:</label>
-        <input id="files" type="file" accept="image/*" multiple />
-      </div>
-      <button id="share" type="button" onClick={shareMed}>Share your images!</button>
-      <output id="output"></output> */}
-      <RWebShare
+      {/* <RWebShare
         data={shareData}
-        onClick={() => console.log("shared successfully!")}
       >
         <button>Share 🔗</button>
-      </RWebShare>
+      </RWebShare> */}
+      <h4>is Your device iphone : {detectMobile()}</h4>
     </div>
   );
 }
