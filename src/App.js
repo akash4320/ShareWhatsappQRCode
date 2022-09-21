@@ -120,7 +120,6 @@ function App() {
       <RWebShare
         data={shareData}
         onClick={() => console.log("shared successfully!")}
-        disableNative={true}
       >
         <button>Share 🔗</button>
       </RWebShare>
